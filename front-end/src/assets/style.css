@@ -1,0 +1,13 @@
+@import 'tailwindcss';
+
+@layer utilities {
+    @media (max-width: 639px) {
+      .custom-padding {
+        padding: 2.5rem; /* Пример: py-10 */
+      }
+    }
+  }
+
+body {
+    background-color: #E0FFFF;
+}
