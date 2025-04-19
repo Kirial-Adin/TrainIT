@@ -51,6 +51,6 @@ onMounted(async () => {
       </div>
     </div>
   </div>
-  <TrainingsList v-if="component" />
+  <TrainingsList v-if="component === 'trainings'" />
   <ExercisesList v-else />
 </template>

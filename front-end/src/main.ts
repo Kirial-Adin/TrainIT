@@ -14,3 +14,5 @@ app.use(autoAnimatePlugin)
 app.use(router)
 
 app.mount('#app')
+
+export { router }
