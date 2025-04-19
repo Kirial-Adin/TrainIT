@@ -9,7 +9,6 @@ import AuthService from '../services/AuthService'
 
 
 
-
 export const useAuthStore = defineStore('auth', () => {
     const userInfo = ref({
         user: {} as IUser,
@@ -30,4 +29,22 @@ export const useAuthStore = defineStore('auth', () => {
         alert(e.response.data.message)
       }
     }
+    const login = async (email: string, password: string) => {
+      try {
+        const response = await AuthService.login(email, password)
+        console.log(response.data);
+        localStorage.setItem('token', response.data.accessToken)
+        userInfo.value = {
+          user: response.data.user,
+          isAuth: true,
+        }
+        router.replace('/')
+
+      } catch (e: any) {
+        alert(e.response.data.message)
+      }
+    }
+
+
+    return { userInfo, isAuth, registration, login}
 })
