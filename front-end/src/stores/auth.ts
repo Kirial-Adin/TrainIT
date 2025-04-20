@@ -10,9 +10,11 @@ import AuthService from '../services/AuthService'
 
 
 export const useAuthStore = defineStore('auth', () => {
-    const userInfo = ref({
+    const userInfo = ref<{
+      user: IUser
+    }>({
         user: {} as IUser,
-        isAuth: false,
+        // isAuth: false,
       })
     const isAuth = ref(false)
     const registration = async (email: string, password: string, weight: number, height: number, experience: string, trainingGoal: string) => {

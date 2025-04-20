@@ -8,7 +8,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   build: {
-    outDir: 'public'
+    outDir: 'dist'
   },
   css: {
     postcss: {
