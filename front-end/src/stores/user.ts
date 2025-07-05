@@ -1,7 +1,7 @@
-import { ref, reactive } from 'vue'
+import type { Exercise, TrainingSession, UserProfile } from '../models'
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import type { UserProfile, Exercise, TrainingSession } from '../models'
 
 export const useUserStore = defineStore('user', () => {
   const router = useRouter()
@@ -26,7 +26,8 @@ export const useUserStore = defineStore('user', () => {
 
     if (exercise?.measurementType === 'repeats') {
       return Math.round((exercise.repeats || 0) * experienceMultiplier)
-    } else {
+    }
+    else {
       return Math.round((exercise.time || 0) * experienceMultiplier)
     }
   }
@@ -38,8 +39,8 @@ export const useUserStore = defineStore('user', () => {
   const calculateTrainingPoints = (session: TrainingSession): number => {
     const basePoints = 100
     const completionBonus = session.completedExercises.length * 10
-    const timeBonus =
-      Math.floor(session.completedExercises.reduce((acc, ex) => acc + ex.duration, 0) / 60) * 5
+    const timeBonus
+      = Math.floor(session.completedExercises.reduce((acc, ex) => acc + ex.duration, 0) / 60) * 5
 
     return basePoints + completionBonus + timeBonus
   }

@@ -1,7 +1,7 @@
-import { ref } from 'vue'
-import { defineStore } from 'pinia'
-import axios from 'axios'
 import type { Exercise } from '../models'
+import axios from 'axios'
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
 export const useExercisesStore = defineStore('exercises', () => {
   const exercises = ref<Exercise[]>([])
@@ -15,7 +15,8 @@ export const useExercisesStore = defineStore('exercises', () => {
       exercises.value = data.map((exercise: Exercise) => ({
         ...exercise,
       }))
-    } catch (error) {
+    }
+    catch (error) {
       console.log(error)
     }
   }
@@ -23,15 +24,16 @@ export const useExercisesStore = defineStore('exercises', () => {
     try {
       const response = await axios.get(`https://c1223b1bc21e6d23.mokky.dev/exercises/${id}`)
       currentExercise.value = response.data
-    } catch (error) {
+    }
+    catch (error) {
       console.log(error)
     }
   }
   const getById = (id: number) => {
-    return exercises.value.find((ex) => ex.id === id)
+    return exercises.value.find(ex => ex.id === id)
   }
   const getExercisesByType = (type: string) => {
-    return exercises.value.filter((exer) => exer.type === type)
+    return exercises.value.filter(exer => exer.type === type)
   }
 
   return {

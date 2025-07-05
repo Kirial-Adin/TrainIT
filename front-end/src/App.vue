@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
 import { onMounted } from 'vue'
-import Header from './components/Header.vue'
+import { RouterView } from 'vue-router'
+import Header from './components/page-proofs/Header.vue'
 import { useExercisesStore } from './stores/exercises'
 import { useTrainingStore } from './stores/trainings'
 

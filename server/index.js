@@ -21,7 +21,7 @@ app.use(express.static('./static'))
 app.use(cookieParser())
 app.use("/api/auth", authRouter);
 app.use("/api/files", fileRouter);
-app.use('api/train', )
+app.use('api/train', trainRouter)
 
 
 const start = async () => {

@@ -1,4 +1,4 @@
-const exerciseService = require("../services/exercise-service.ts");
+const exerciseService = require("../services/exercise-service");
 const ApiError = require("../exceptions/api-errors");
 
 class ExerciseController {

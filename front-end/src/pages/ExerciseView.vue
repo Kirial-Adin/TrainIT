@@ -1,9 +1,9 @@
 <script setup vapor lang="ts">
-import { onMounted } from 'vue'
-import { useExercisesStore } from '../stores/exercises'
-import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import ExerciseCard from '../components/ExerciseCard.vue'
+import { onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import ExerciseCard from '../components/cards/ExerciseCard.vue'
+import { useExercisesStore } from '../stores/exercises'
 
 const dataStore = useExercisesStore()
 const route = useRoute()
@@ -16,5 +16,5 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ExerciseCard :currentExercise="currentExercise" />
+  <ExerciseCard :current-exercise="currentExercise" />
 </template>

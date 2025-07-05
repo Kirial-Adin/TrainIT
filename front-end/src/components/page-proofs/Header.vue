@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useExercisesStore } from '../stores/exercises'
+import { useExercisesStore } from '../../stores/exercises'
 
 const store = useExercisesStore()
 const inMenuOpen = ref(false)
 
-const toggleMenu = () => {
+function toggleMenu() {
   inMenuOpen.value = !inMenuOpen.value
 }
 </script>
@@ -58,7 +58,7 @@ const toggleMenu = () => {
         </h1>
       </RouterLink>
       <!-- Бургер-иконка для мобильных устройств -->
-      <button type="button" @click="toggleMenu" class="md:hidden text-white focus:outline-none">
+      <button type="button" class="md:hidden text-white focus:outline-none" @click="toggleMenu">
         <svg
           class="w-8 h-8"
           fill="none"
@@ -71,31 +71,33 @@ const toggleMenu = () => {
             stroke-linejoin="round"
             stroke-width="2"
             d="M4 6h16M4 12h16m-7 6h7"
-          ></path>
+          />
         </svg>
       </button>
     </div>
 
     <!-- Навигационное меню -->
     <ul
-      :class="{
-        'flex flex-col md:flex-row justify-center md:justify-end items-center gap-4 md:gap-6 lg:gap-10': true,
+      class="flex flex-col md:flex-row justify-center md:justify-end items-center gap-4 md:gap-6 lg:gap-10 md:flex" :class="{
         hidden: !inMenuOpen,
-        'md:flex': true,
       }"
     >
       <li
         class="flex items-center gap-3 text-lg md:text-xl lg:text-2xl text-white hover:text-gray-400 cursor-pointer"
       >
         <RouterLink to="/">
-          <h1 @click="store.components = 'trainings'">Тренировки</h1>
+          <h1 @click="store.components = 'trainings'">
+            Тренировки
+          </h1>
         </RouterLink>
       </li>
       <li
         class="flex items-center gap-3 text-lg md:text-xl lg:text-2xl text-white hover:text-gray-400 cursor-pointer"
       >
         <RouterLink to="/">
-          <h1 @click="store.components = 'exercises'">Упражнения</h1>
+          <h1 @click="store.components = 'exercises'">
+            Упражнения
+          </h1>
         </RouterLink>
       </li>
       <li
