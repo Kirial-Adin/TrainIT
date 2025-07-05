@@ -1,17 +1,17 @@
-const exerciseModel = require("../models/exercise-model");
+// const exerciseModel = require("../models/exercise-model.js");
 const ExerciseDTO = require("../dtos/exercise-dto");
 
 class ExerciseService {
   async createExercise(
-    title: any,
-    complexity: string,
-    recommendation: string,
-    type: string,
-    equipment: string,
-    measurementType: string,
-    imageUrl: string,
-    repeats?: number,
-    time?: number
+    title,
+    complexity,
+    recommendation,
+    type,
+    equipment,
+    measurementType,
+    imageUrl,
+    repeats,
+    time
   ) {
     const exercise = exerciseModel.create(
         title,

@@ -1,9 +1,9 @@
-import { ref, computed } from 'vue'
-import { defineStore, storeToRefs } from 'pinia'
-import { useTrainingStore } from './trainings'
 import type { Training, TrainingSession } from '../models'
-import { useUserStore } from './user'
 import axios from 'axios'
+import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
+import { useTrainingStore } from './trainings'
+import { useUserStore } from './user'
 
 export const useTrainingSessionStore = defineStore('trainingSession', () => {
   const currentSession = ref<TrainingSession | null>(null)
@@ -22,8 +22,8 @@ export const useTrainingSessionStore = defineStore('trainingSession', () => {
 
   const currentExercise = computed(() => {
     if (
-      !currentSession.value ||
-      currentExerciseIndex.value >= currentSession.value.completedExercises.length
+      !currentSession.value
+      || currentExerciseIndex.value >= currentSession.value.completedExercises.length
     ) {
       return null
     }
@@ -34,7 +34,7 @@ export const useTrainingSessionStore = defineStore('trainingSession', () => {
     currentSession.value = {
       trainingId: training.id,
       startTime: new Date(),
-      completedExercises: training.exercises.map((ex) => ({
+      completedExercises: training.exercises.map(ex => ({
         exerciseId: ex.exerciseId,
         actualValue: 0,
         duration: 0,
@@ -53,7 +53,8 @@ export const useTrainingSessionStore = defineStore('trainingSession', () => {
         completed: true,
       })
       isCompleted.value = true
-    } catch (error) {
+    }
+    catch (error) {
       throw error
     }
     currentSession.value = null
@@ -67,14 +68,16 @@ export const useTrainingSessionStore = defineStore('trainingSession', () => {
       isCompleted.value = false
       window.location.reload()
       trainingStore.startTrainingById(id)
-    } catch (error) {
+    }
+    catch (error) {
       throw error
     }
     currentSession.value = null
   }
 
   function startTimer() {
-    if (timerInterval.value) return
+    if (timerInterval.value)
+      return
 
     timerInterval.value = setInterval(() => {
       timer.value++
@@ -102,7 +105,8 @@ export const useTrainingSessionStore = defineStore('trainingSession', () => {
   }
 
   function completeExercise(actualValue: number) {
-    if (!currentSession.value) return
+    if (!currentSession.value)
+      return
 
     const exercise = currentSession.value.completedExercises[currentExerciseIndex.value]
     exercise.actualValue = actualValue
@@ -114,13 +118,15 @@ export const useTrainingSessionStore = defineStore('trainingSession', () => {
 
     if (currentExerciseIndex.value < currentSession.value.completedExercises.length - 1) {
       startRest()
-    } else {
+    }
+    else {
       finishTraining()
     }
   }
 
   function skipExercise() {
-    if (!currentSession.value) return
+    if (!currentSession.value)
+      return
 
     currentSession.value.skippedExercises.push(
       currentSession.value.completedExercises[currentExerciseIndex.value].exerciseId,
@@ -132,13 +138,15 @@ export const useTrainingSessionStore = defineStore('trainingSession', () => {
     if (currentExerciseIndex.value != currentSession.value.completedExercises.length) {
       currentExerciseIndex.value++
       startRest()
-    } else {
+    }
+    else {
       finishTraining()
     }
   }
 
   function finishTraining() {
-    if (!currentSession.value) return
+    if (!currentSession.value)
+      return
 
     currentSession.value.endTime = new Date()
     const points = userStore.calculateTrainingPoints(currentSession.value)

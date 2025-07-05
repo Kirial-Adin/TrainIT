@@ -1,9 +1,9 @@
-import { ref } from 'vue'
-import { defineStore, storeToRefs } from 'pinia'
-import { useExercisesStore } from './exercises'
 import type { Exercise } from '../models'
 import axios from 'axios'
+import { defineStore, storeToRefs } from 'pinia'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useExercisesStore } from './exercises'
 
 export const useExercisesManagementStore = defineStore('exercises-management', () => {
   const dataStore = useExercisesStore()
@@ -19,7 +19,8 @@ export const useExercisesManagementStore = defineStore('exercises-management', (
     try {
       const maxId = Math.max(...exercises.value.map((item: Exercise) => item.id), 0)
       return (lastId.value = maxId)
-    } catch (error) {
+    }
+    catch (error) {
       console.log(error)
     }
   }
@@ -49,7 +50,7 @@ export const useExercisesManagementStore = defineStore('exercises-management', (
       const formData = new FormData()
       formData.append('file', file)
 
-      await new Promise((resolve) => setTimeout(resolve, 500))
+      await new Promise(resolve => setTimeout(resolve, 500))
 
       uploadImage(exercise, file)
 
@@ -62,7 +63,8 @@ export const useExercisesManagementStore = defineStore('exercises-management', (
       await axios.post('https://c1223b1bc21e6d23.mokky.dev/exercises', newExercise)
       lastId.value++
       return newExercise
-    } catch (error) {
+    }
+    catch (error) {
       console.error(error)
       throw error
     }
@@ -77,7 +79,8 @@ export const useExercisesManagementStore = defineStore('exercises-management', (
       await axios.patch(`https://c1223b1bc21e6d23.mokky.dev/exercises/${exercise.id}`, exercise)
       router.push({ name: 'home' })
       return exercise
-    } catch (error) {
+    }
+    catch (error) {
       console.error(error)
       throw error
     }
@@ -87,7 +90,8 @@ export const useExercisesManagementStore = defineStore('exercises-management', (
     try {
       await axios.delete(`https://c1223b1bc21e6d23.mokky.dev/exercises/${id}`)
       router.push({ name: 'home' })
-    } catch (error) {
+    }
+    catch (error) {
       console.log(error)
       throw error
     }

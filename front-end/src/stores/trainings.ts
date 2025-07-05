@@ -1,9 +1,9 @@
-import { ref } from 'vue'
-import { defineStore, storeToRefs } from 'pinia'
-import { useTrainingSessionStore } from './training-session'
 import type { Training, TrainingSession } from '../models'
-import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { defineStore, storeToRefs } from 'pinia'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useTrainingSessionStore } from './training-session'
 
 export const useTrainingStore = defineStore('trainings', () => {
   const trainings = ref<Training[]>([])
@@ -19,7 +19,8 @@ export const useTrainingStore = defineStore('trainings', () => {
       const maxId = Math.max(...trainings.value.map((item: Training) => item.id), 0)
       console.log(maxId)
       return (lastId.value = maxId)
-    } catch (error) {
+    }
+    catch (error) {
       console.log(error)
     }
   }
@@ -31,7 +32,8 @@ export const useTrainingStore = defineStore('trainings', () => {
       trainings.value = data.map((obj: object) => ({
         ...obj,
       }))
-    } catch (error) {
+    }
+    catch (error) {
       console.log(error)
     }
   }
@@ -55,11 +57,11 @@ export const useTrainingStore = defineStore('trainings', () => {
         totalPoints: 0,
       }
       currentExerciseIndex.value = 0
-    } catch (error) {
+    }
+    catch (error) {
       throw error
     }
   }
-
 
   const uploadTrainingImage = (training: Training, file: File) => {
     const imageUrl = URL.createObjectURL(file)
@@ -90,7 +92,8 @@ export const useTrainingStore = defineStore('trainings', () => {
       trainings.value.push(response.data)
       router.push({ name: 'home' })
       return response.data
-    } catch (error) {
+    }
+    catch (error) {
       console.error(error)
       throw error
     }
@@ -100,7 +103,8 @@ export const useTrainingStore = defineStore('trainings', () => {
     try {
       await axios.delete(`https://c1223b1bc21e6d23.mokky.dev/training/${id}`)
       router.push({ name: 'home' })
-    } catch (error) {
+    }
+    catch (error) {
       console.log(error)
       throw error
     }

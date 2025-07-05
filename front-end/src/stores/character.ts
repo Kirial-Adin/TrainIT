@@ -5,7 +5,6 @@ import { useUserStore } from './user'
 export const useCharacterStore = defineStore('character', () => {
   const userStore = useUserStore()
 
-
   const outfits = {
     default: { name: 'Стандартный образ', price: 0 },
     sporty: { name: 'Спортивный образ', price: 100 },
@@ -28,15 +27,19 @@ export const useCharacterStore = defineStore('character', () => {
 
   const updatePhysique = () => {
     const points = userStore.profile.points
-    if (points >= 1000) characterProgress.value.physique = 'элита'
-    else if (points >= 500) characterProgress.value.physique = 'атлет'
-    else if (points >= 200) characterProgress.value.physique = 'занимающийся'
+    if (points >= 1000)
+      characterProgress.value.physique = 'элита'
+    else if (points >= 500)
+      characterProgress.value.physique = 'атлет'
+    else if (points >= 200)
+      characterProgress.value.physique = 'занимающийся'
     else characterProgress.value.physique = 'новичок'
   }
 
   const purchaseOutfit = (outfitId: string) => {
     const outfit = outfits[outfitId]
-    if (!outfit) return false
+    if (!outfit)
+      return false
 
     if (userStore.profile.points >= outfit.price) {
       userStore.profile.points -= outfit.price
@@ -48,7 +51,8 @@ export const useCharacterStore = defineStore('character', () => {
 
   const purchaseAccessory = (accessoryId: string) => {
     const accessory = accessories[accessoryId]
-    if (!accessory) return false
+    if (!accessory)
+      return false
 
     if (userStore.profile.points >= accessory.price) {
       userStore.profile.points -= accessory.price

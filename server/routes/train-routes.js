@@ -16,3 +16,5 @@ router.post(
     body("time").isNumeric().trim().notEmpty(),
     exerciseController.createExercise
 )
+
+module.exports = router;

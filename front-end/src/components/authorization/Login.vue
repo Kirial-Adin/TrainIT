@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { Button } from '@/components/ui/button'
-import { useAuthStore } from '../stores/auth'
+import { ref } from 'vue'
+import { useAuthStore } from '../../stores/auth'
 
 const authStore = useAuthStore()
 const email = ref<string>('')
 const password = ref<string>('')
-const login = () => {
-    try {
-        authStore.login(email.value, password.value)
-    } catch (e: any) {
-        console.error(e);
-    }
+function login() {
+  try {
+    authStore.login(email.value, password.value)
+  }
+  catch (e: any) {
+    console.error(e)
+  }
 }
-
 </script>
 
 <template>
@@ -36,7 +36,7 @@ const login = () => {
                       type="email"
                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                       required
-                    />
+                    >
                   </div>
 
                   <div>
@@ -46,7 +46,7 @@ const login = () => {
                       type="password"
                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                       required
-                    />
+                    >
                   </div>
                 </div>
 

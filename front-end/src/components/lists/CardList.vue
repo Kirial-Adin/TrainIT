@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Card from './Card.vue'
-import { useTrainingSessionStore } from '../stores/training-session'
-import { useTrainingStore } from '../stores/trainings'
-import { useRouter } from 'vue-router'
 import type { Training } from '@/models'
+import { useRouter } from 'vue-router'
+import { useTrainingSessionStore } from '../../stores/training-session'
+import { useTrainingStore } from '../../stores/trainings'
+import Card from '../cards/Card.vue'
 
 interface Exercise {
   id: number
@@ -14,19 +14,22 @@ interface Exercise {
   imageUrl: string
 }
 
+const props = defineProps<{
+  exercises: Exercise[] | Training[]
+}>()
 const sessionStore = useTrainingSessionStore()
 const trainingStore = useTrainingStore()
 const router = useRouter()
 
-const navigateToDetail = (id: number) => {
+function navigateToDetail(id: number) {
   router.push({ name: 'exercise', params: { id } })
 }
 
-const navigateToEdit = (id: number) => {
+function navigateToEdit(id: number) {
   router.push({ name: 'exercise-edit', params: { id } })
 }
 
-const navigateToTraining = (id: number) => {
+function navigateToTraining(id: number) {
   startTraining(id)
   sessionStore.activateTraining = true
   setTimeout(() => {
@@ -38,21 +41,17 @@ const navigateToTraining = (id: number) => {
 function startTraining(id: number) {
   trainingStore.startTrainingById(id)
 }
-
-const props = defineProps<{
-  exercises: Exercise[] | Training[]
-}>()
 </script>
 
 <template>
   <div
-    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 lg:gap-10"
     v-auto-animate
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 lg:gap-10"
   >
     <Card
       v-for="item in exercises"
-      :key="item.id"
       :id="item.id"
+      :key="item.id"
       :title="item.title"
       :complexity="item.complexity"
       :type="item.type"

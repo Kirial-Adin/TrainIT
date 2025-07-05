@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { useExercisesStore } from '../stores/exercises'
-import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
-import ExerciseEdit from '../components/EditExercise.vue'
+import { onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import ExerciseEdit from '../components/technical/EditExercise.vue'
+import { useExercisesStore } from '../stores/exercises'
 
 const dataStore = useExercisesStore()
 const route = useRoute()
@@ -17,6 +17,6 @@ onMounted(async () => {
 
 <template>
   <div>
-    <ExerciseEdit :currentExercise="currentExercise" />
+    <ExerciseEdit :current-exercise="currentExercise" />
   </div>
 </template>

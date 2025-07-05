@@ -1,15 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../pages/Home.vue'
-import ExerciseView from '../pages/ExerciseView.vue'
+import Character from '../pages/Character.vue'
+import DashBoard from '../pages/DashBoard.vue'
 import ExerciseCreate from '../pages/ExerciseCreate.vue'
 import ExerciseEdit from '../pages/ExerciseEdit.vue'
-import TrainingsCreate from '../pages/TrainingsCreate.vue'
-import TrainingMode from '../pages/TrainingMode.vue'
-import TrainingSession from '../pages/TrainingSession.vue'
+import ExerciseView from '../pages/ExerciseView.vue'
+import Home from '../pages/Home.vue'
 import OnBoarding from '../pages/OnBoarding.vue'
-import DashBoard from '../pages/DashBoard.vue'
-import Character from '../pages/Character.vue'
 import Profile from '../pages/Profile.vue'
+import TrainingMode from '../pages/TrainingMode.vue'
+import TrainingsCreate from '../pages/TrainingsCreate.vue'
+import TrainingSession from '../pages/TrainingSession.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -70,7 +70,7 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: Profile,
-    }
+    },
   ],
 })
 
