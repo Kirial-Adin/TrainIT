@@ -3,10 +3,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const authRouter = require("./routes/auth-routes");
 const fileRouter = require("./routes/file-routes");
-const trainRouter = require("./routes/train-routes")
+const trainRouter = require("./routes/workout-routes")
+const exerciseRouter = require("./routes/exercise-routes")
+const workoutRouter = require("./routes/workout-routes")
 const fileUpload = require("express-fileupload")
 const cookieParser = require('cookie-parser')
 const cors = require("cors");
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -21,8 +24,9 @@ app.use(express.static('./static'))
 app.use(cookieParser())
 app.use("/api/auth", authRouter);
 app.use("/api/files", fileRouter);
-app.use('api/train', trainRouter)
-
+app.use('/api/train', trainRouter)
+app.use('/api/exercises', exerciseRouter)
+app.use('/api/trainings', workoutRouter)
 
 const start = async () => {
   try {

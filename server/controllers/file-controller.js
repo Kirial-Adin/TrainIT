@@ -1,6 +1,7 @@
 const fileService = require('../services/file-service');
 const File = require('../models/file-model');
 const User = require('../models/user-model');
+const Exercise = require('../models/exercise-model');
 const fs = require('fs')
 const uuid = require('uuid');
 
@@ -137,21 +138,25 @@ class FileController {
             return res.status(400).json({message: 'Ошибка поиска'})
         }
     }
-    async uploadAvatar(req, res) {
+    async uploadPreview(req, res) {
         try {
             const file = req.files.file
-            const user = await User.findById(req.user.id)
-            const avatarName = uuid.v4() + '.jpg'
-            file.mv(process.env.STATIC_PATH + '\\' + avatarName)
-            user.avatar = avatarName
-            await user.save()
-            return res.json(user)
+            const exerciseId = req.body.exerciseId;
+            console.log(exerciseId)
+            const exercise = await Exercise.findById(exerciseId)
+            const previewName = uuid.v4() + '.jpg'
+            console.log(previewName)
+            file.mv(process.env.STATIC_PATH + '\\' + previewName)
+            console.log(exercise)
+            exercise.imageUrl = previewName
+            await exercise.save()
+            return res.json(exercise)
         } catch (e) {
             console.log(e)
             return res.status(400).json({message: 'Ошибка загрузки аватара'})
         }
     }
-    async deleteAvatar(req, res) {
+    async deletePreview(req, res) {
         try {
             const user = await User.findById(req.user.id)
             fs.unlinkSync(process.env.STATIC_PATH + '\\' + user.avatar)
@@ -163,7 +168,7 @@ class FileController {
             return res.status(400).json({message: 'Ошибка удаления аватара'})
         }
     }
-    async getAvatar(req, res) {
+    async getPreview(req, res) {
         try {
             const user = await User.findById(req.user.id)
             // const avatar = fs.readFileSync(process.env.STATIC_PATH + '\\' + user.avatar)

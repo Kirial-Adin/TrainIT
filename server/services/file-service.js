@@ -3,7 +3,7 @@ const FileModel = require("../models/file-model");
 const e = require("express");
 
 class FileService {
-    createDir(file) {
+     createDir(file) {
         const filePath = `${process.env.FILE_PATH}\\${file.user}\\${file.path}`
         return new Promise((resolve, reject) => {
             try {
@@ -30,6 +30,7 @@ class FileService {
             fs.unlinkSync(path)
         }
     }
+
 }
 
 module.exports = new FileService()

@@ -42,7 +42,7 @@ class UserService {
     if (!user) {
       throw ApiError.BadRequest("Пользователь с таким email не найден");
     }
-    const isPassEquals = await bcrypt.compare(password, user.password);
+    const isPassEquals = await argon2.verify(user.password, password);
     if (!isPassEquals) {
       throw ApiError.BadRequest("Неверный пароль");
     }
@@ -71,6 +71,19 @@ class UserService {
 
     await tokenService.saveToken(userDto.id, tokens.refreshToken);
     return { ...tokens, user: userDto };
+  }
+  async getUserIdByToken(refreshToken) {
+    if (!refreshToken) {
+      throw ApiError.UnauthorizedError();
+    }
+    const userData = tokenService.validateRefreshToken(refreshToken);
+    const tokenFromDb = await tokenService.findToken(refreshToken);
+    if (!userData || !tokenFromDb) {
+      throw ApiError.UnauthorizedError();
+    }
+    const user = await UserModel.findById(userData.id);
+    const userDto = new UserDto(user);
+    return userDto.id;
   }
 }
 
