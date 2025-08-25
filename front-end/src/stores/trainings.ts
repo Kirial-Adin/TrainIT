@@ -1,22 +1,25 @@
 import type { Training, TrainingSession } from '../models'
-import axios from 'axios'
 import { defineStore, storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useTrainingSessionStore } from './training-session'
+import $api from '../http/api'
+import axios from 'axios'
+import TrainingService from '@/services/TrainingService'
+
 
 export const useTrainingStore = defineStore('trainings', () => {
   const trainings = ref<Training[]>([])
   const currentTraining = ref<TrainingSession | null>(null)
   const router = useRouter()
   const currentId = ref(0)
-  const lastId = ref(0)
+  const lastId = ref()
 
   const { currentSession, currentExerciseIndex } = storeToRefs(useTrainingSessionStore())
 
   const getTrainingLastId = () => {
     try {
-      const maxId = Math.max(...trainings.value.map((item: Training) => item.id), 0)
+      const maxId = trainings.value.length > 0 ? trainings.value[trainings.value.length - 1]._id : 0
       console.log(maxId)
       return (lastId.value = maxId)
     }
@@ -27,7 +30,8 @@ export const useTrainingStore = defineStore('trainings', () => {
 
   const getTraining = async () => {
     try {
-      const response = await axios.get('https://c1223b1bc21e6d23.mokky.dev/training')
+      // const response = await axios.get('https://c1223b1bc21e6d23.mokky.dev/training')
+      const response = await $api.get<Training[]>('api/trainings')
       const data = response.data
       trainings.value = data.map((obj: object) => ({
         ...obj,
@@ -38,9 +42,9 @@ export const useTrainingStore = defineStore('trainings', () => {
     }
   }
 
-  const startTrainingById = async (id: number | string) => {
+   const startTrainingById = async (id: number | string) => {
     try {
-      const response = await axios.get(`https://c1223b1bc21e6d23.mokky.dev/training/${id}`)
+      const response = await $api.get<Training>(`api/trainings/${id}`)
       currentTraining.value = response.data
       currentId.value = response.data.id
       currentSession.value = {
@@ -99,9 +103,27 @@ export const useTrainingStore = defineStore('trainings', () => {
     }
   }
 
-  const deleteTraining = async (id: number) => {
+  const saveTrainingHandler = async (training: Omit<Training, 'id'>, file: File) => {
     try {
-      await axios.delete(`https://c1223b1bc21e6d23.mokky.dev/training/${id}`)
+      const fileName = file.name
+      const formData = new FormData()
+      formData.append('file', file)
+
+      uploadTrainingImage(training, file)
+      console.log(training,  training.title);
+      
+      const response = TrainingService.createTraining(training.title, training.complexity, training.description, training.exercises, training.type, `/img/${fileName}`, training.time, file)
+      router.push({ name: 'home' })
+
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
+  }
+
+  const deleteTraining = async (id: string) => {
+    try {
+      await TrainingService.deleteTraining(id)
       router.push({ name: 'home' })
     }
     catch (error) {
@@ -110,5 +132,5 @@ export const useTrainingStore = defineStore('trainings', () => {
     }
   }
 
-  return { trainings, currentId, currentTraining, getTrainingLastId, getTraining, startTrainingById, saveTraining, deleteTraining }
+  return { trainings, currentId, currentTraining, getTrainingLastId, getTraining, startTrainingById, saveTraining, saveTrainingHandler, deleteTraining }
 })

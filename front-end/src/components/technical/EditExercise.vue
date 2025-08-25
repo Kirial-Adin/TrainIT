@@ -2,14 +2,18 @@
 import { Button } from '@/components/ui/button'
 import { onMounted, ref } from 'vue'
 import { useExercisesManagementStore } from '../../stores/exercises-management'
+import { useRoute } from 'vue-router'
 
 const props = defineProps<{
-  currentExercise: any
+  currentExercise: Object
 }>()
 const store = useExercisesManagementStore()
 const measurementType = ref<'repeats' | 'time'>('repeats')
-const imageFile = ref<File | null>(null)
+const imageFile = ref<File | undefined>(undefined)
 const imagePreview = ref<string>('')
+
+const route = useRoute()
+const id = String(route.params.id)
 
 const form = ref({
   title: '',
@@ -22,9 +26,25 @@ const form = ref({
   imageUrl: '',
 })
 
-const complexityOptions = ['Легкий', 'Средний', 'Сложный']
-const typeOptions = ['Сила', 'Кардио', 'Гибкость', 'Баланс', 'Другое']
-const equipmentOptions = ['Нет', 'Гантели', 'Фитнес резинки', 'Коврик', 'Другое']
+const complexityOptions = [
+  { value: 'easy', label: 'Легкий' },
+  { value: 'medium', label: 'Средний' },
+  { value: 'hard', label: 'Сложный' },
+]
+const typeOptions = [
+  { value: 'strength', label: 'Сила' },
+  { value: 'cardio', label: 'Кардио' },
+  { value: 'flexibility', label: 'Гибкость' },
+  { value: 'balance', label: 'Баланс' },
+  { value: 'other', label: 'Другое' },
+]
+const equipmentOptions = [
+  { value: 'none', label: 'Нет' },
+  { value: 'fitness_band', label: 'Фитнес резинки' },
+  { value: 'dumbbells', label: 'Гантели' },
+  { value: 'rug', label: 'Коврик' },
+  { value: 'other', label: 'Другое' },
+]
 
 function handleImageEdit(event: Event) {
   const target = event.target as HTMLInputElement
@@ -37,7 +57,7 @@ function handleImageEdit(event: Event) {
 async function handleSubmit() {
   try {
     const exerciseData = {
-      id: props.currentExercise.id,
+      _id: id,
       title: form.value.title,
       complexity: form.value.complexity,
       type: form.value.type,
@@ -53,11 +73,9 @@ async function handleSubmit() {
       const fileName = `${Date.now()}-${imageFile.value.name}`
       exerciseData.imageUrl = `/img/${fileName}`
     }
-
     await store.updateExercise(exerciseData, imageFile.value)
     alert('Exercise updated successfully!')
-  }
-  catch (error) {
+  } catch (error) {
     alert('Error updating exercise')
     console.error(error)
   }
@@ -85,9 +103,7 @@ onMounted(() => {
     class="relative flex flex-col items-center bg-white border border-slate-100 rounded-2xl p-4 sm:p-6 lg:p-8 w-full max-w-[95%] sm:max-w-[85%] md:max-w-[75%] lg:max-w-[65%] mx-auto"
   >
     <div class="max-w-2xl mx-auto p-6">
-      <h2 class="text-2xl font-bold mb-6">
-        Изменить упражнение
-      </h2>
+      <h2 class="text-2xl font-bold mb-6">Изменить упражнение</h2>
 
       <form class="space-y-6" @submit.prevent="handleSubmit">
         <div>
@@ -97,18 +113,18 @@ onMounted(() => {
             type="text"
             required
             class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-          >
+          />
         </div>
 
         <div>
           <label class="block text-sm font-medium mb-2">Тип измерения</label>
           <div class="flex gap-4">
             <label class="flex items-center">
-              <input v-model="measurementType" type="radio" value="repeats" class="mr-2">
+              <input v-model="measurementType" type="radio" value="repeats" class="mr-2" />
               Повторы
             </label>
             <label class="flex items-center">
-              <input v-model="measurementType" type="radio" value="time" class="mr-2">
+              <input v-model="measurementType" type="radio" value="time" class="mr-2" />
               Время
             </label>
           </div>
@@ -123,7 +139,7 @@ onMounted(() => {
             step="1"
             required
             class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-          >
+          />
         </div>
         <div v-else>
           <label class="block text-sm font-medium mb-2">Время выполнения</label>
@@ -135,7 +151,7 @@ onMounted(() => {
             required
             placeholder="e.g., 30 seconds, 1 minute"
             class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-          >
+          />
         </div>
 
         <div>
@@ -145,11 +161,9 @@ onMounted(() => {
             required
             class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">
-              Выберите сложность
-            </option>
-            <option v-for="option in complexityOptions" :key="option" :value="option">
-              {{ option }}
+            <option value="">Выберите сложность</option>
+            <option v-for="option in complexityOptions" :key="option.value" :value="option.value">
+              {{ option.label }}
             </option>
           </select>
         </div>
@@ -161,11 +175,9 @@ onMounted(() => {
             required
             class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">
-              Выберите тип
-            </option>
-            <option v-for="option in typeOptions" :key="option" :value="option">
-              {{ option }}
+            <option value="">Выберите тип</option>
+            <option v-for="option in typeOptions" :key="option.value" :value="option.value">
+              {{ option.label }}
             </option>
           </select>
         </div>
@@ -177,11 +189,9 @@ onMounted(() => {
             required
             class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">
-              Выберите оборудование
-            </option>
-            <option v-for="option in equipmentOptions" :key="option" :value="option">
-              {{ option }}
+            <option value="">Выберите оборудование</option>
+            <option v-for="option in equipmentOptions" :key="option.value" :value="option.value">
+              {{ option.label }}
             </option>
           </select>
         </div>
@@ -194,13 +204,13 @@ onMounted(() => {
             required
             class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
             @change="handleImageEdit"
-          >
+          />
           <img
             v-if="imagePreview"
             :src="imagePreview"
             alt="Preview"
             class="mt-2 max-w-xs rounded"
-          >
+          />
         </div>
 
         <div>

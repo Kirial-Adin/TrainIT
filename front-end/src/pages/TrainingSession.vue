@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TrainingSession from '../components/training/TrainingSession.vue'
+import TrainingSession from '../feauters/training session/TrainingSession.vue'
 </script>
 
 <template>

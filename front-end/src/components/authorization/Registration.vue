@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { ref } from 'vue'
 import { useAuthStore } from '../../stores/auth'
 
@@ -10,10 +11,24 @@ const weight = ref<number>(0)
 const height = ref<number>(0)
 const experience = ref<string>('')
 const trainingGoal = ref<string>('')
+const isVisable = ref(false)
 
-async function registration() {
+const authObj = ref({
+  email,
+  password,
+  weight,
+  height,
+  experience,
+  trainingGoal
+})
+
+function toggleVisibility() {
+  isVisable.value = !isVisable.value
+}
+
+async function registration(authObj: Object) {
   try {
-    await authStore.registration(email.value, password.value, weight.value, height.value, experience.value, trainingGoal.value)
+    await authStore.registration(authObj)
   }
   catch (e: any) {
     console.error(e)
@@ -32,29 +47,39 @@ async function registration() {
                 Добро пожаловать в Fitness is life!
               </h2>
 
-              <form class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700">Email</label>
-                    <input
-                      v-model="email"
-                      type="email"
-                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-3 py-2"
-                      required
-                    >
+              <form v-if="!isVisable" class="space-y-8">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label class="block text-lg font-medium text-gray-700">Email</label>
+                      <Input
+                        v-model="email"
+                        type="email"
+                        class="mt-2 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-400 focus:ring-indigo-400 text-lg p-3"
+                        required
+                      />
+                    </div>
+  
+                    <div>
+                      <label class="block text-lg font-medium text-gray-700">Пароль</label>
+                      <Input
+                        v-model="password"
+                        type="password"
+                        class="mt-2 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-400 focus:ring-indigo-400 text-lg p-3"
+                        required
+                      />
+                    </div>
                   </div>
+  
+                  <Button
+                    type="button"
+                    class="w-full flex justify-center py-3 px-6 border border-transparent rounded-lg shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    @click="toggleVisibility"
+                  >
+                    Следующий шаг
+                  </Button>
+                </form>
 
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700">Пароль</label>
-                    <input
-                      v-model="password"
-                      type="password"
-                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-3 py-2"
-                      required
-                    >
-                  </div>
-                </div>
-
+              <form v-if="isVisable" class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label class="block text-sm font-medium text-gray-700">Рост (см)</label>
@@ -118,7 +143,7 @@ async function registration() {
                 <Button
                   type="button"
                   class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  @click="registration"
+                  @click="registration(authObj)"
                 >
                   Начать тренировку
                 </Button>

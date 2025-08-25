@@ -22,6 +22,10 @@ export const useFiltersStore = defineStore('filters', () => {
     filtres.sortBy = (event.target as HTMLInputElement).value
   }
 
+  const onClickSelect = (cat: string) => {
+    filtres.sortBy = cat
+  }
+
   const filteredAndSortedItems = computed(() => {
     return [...currentItems.value]
       .filter(item => item.title.toLowerCase().includes(filtres.searchQuery.toLowerCase()))
@@ -51,6 +55,7 @@ export const useFiltersStore = defineStore('filters', () => {
   return {
     filtres,
     components,
+    onClickSelect,
     onChangeSelect,
     filteredAndSortedItems,
     filteredAndSortedExercises,

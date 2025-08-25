@@ -1,5 +1,6 @@
 export interface Exercise {
-  id: number
+  _id: string
+  exerciseId?: string
   title: string
   repeats: number
   time: number
@@ -12,18 +13,17 @@ export interface Exercise {
 }
 
 export interface TrainingExercise {
-  exerciseId: number
+  exerciseId: string
   value: number
   goal: number
   measurementType: string
 }
 
 export interface Training {
-  id: number
+  _id: string
   title: string
   complexity: string
   type: string
-  equipment: string
   imageUrl: string
   description: string
   time: number
@@ -32,6 +32,8 @@ export interface Training {
 }
 
 export interface UserProfile {
+  email?: string
+  password?: string
   weight: number
   height: number
   experience: string
@@ -54,7 +56,7 @@ export interface TrainingSession {
 }
 
 export interface CompletedExercise {
-  exerciseId: number
+  exerciseId: string
   actualValue: number
   duration: number
   restTime: number

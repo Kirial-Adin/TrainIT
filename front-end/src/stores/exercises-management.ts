@@ -1,23 +1,28 @@
 import type { Exercise } from '../models'
-import axios from 'axios'
 import { defineStore, storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useExercisesStore } from './exercises'
+import { useFileStore } from './file'
+import ExercisesService from '@/services/ExercisesService'
+import axios from 'axios'
 
 export const useExercisesManagementStore = defineStore('exercises-management', () => {
   const dataStore = useExercisesStore()
   const { exercises } = storeToRefs(dataStore)
-  const lastId = ref(0)
+  const lastId = ref()
   const router = useRouter()
   const isAdded = ref(false)
   const measurementType = ref<'repeats' | 'time'>('repeats')
   const imageFile = ref<File | null>(null)
   const imagePreview = ref<string>('')
 
+  const FileStore = useFileStore()
+  const { uploadPreview } = FileStore
+
   const getLastId = () => {
     try {
-      const maxId = Math.max(...exercises.value.map((item: Exercise) => item.id), 0)
+      const maxId = exercises.value.length > 0 ? exercises.value[exercises.value.length - 1]._id : 0
       return (lastId.value = maxId)
     }
     catch (error) {
@@ -70,13 +75,33 @@ export const useExercisesManagementStore = defineStore('exercises-management', (
     }
   }
 
-  const updateExercise = async (exercise: Exercise, file: File | null) => {
+  const createExerciseHandler = async (exercise: Omit<Exercise, 'id'>, file: File) => {
+    try {
+      const fileName = `${Date.now()}-${file.name}`
+      const formData = new FormData()
+      formData.append('file', file)
+
+      await new Promise(resolve => setTimeout(resolve, 500))
+
+      const response = await ExercisesService.createExercise(exercise.title, exercise.complexity, exercise.recommendation, exercise.type, exercise.equipment, exercise.measurementType, `/img/${fileName}`, exercise.repeats, exercise.time, file)
+      console.log(response.data.exerciseId );
+      
+      await uploadPreview(file, response.data.exerciseId)
+      router.push({ name: 'home' })
+    }
+    catch (error) {
+      console.error(error)
+      throw error
+    }
+  }
+
+  const updateExercise = async (exercise: Omit<Exercise, 'id'>, file: File | undefined) => {
     try {
       if (file) {
         uploadImage(exercise, file)
-      }
+      }      
 
-      await axios.patch(`https://c1223b1bc21e6d23.mokky.dev/exercises/${exercise.id}`, exercise)
+      await ExercisesService.patchExerciseById(exercise._id, exercise.title, exercise.complexity, exercise.recommendation, exercise.type, exercise.equipment, exercise.measurementType, exercise.repeats, exercise.time, file)
       router.push({ name: 'home' })
       return exercise
     }
@@ -86,9 +111,10 @@ export const useExercisesManagementStore = defineStore('exercises-management', (
     }
   }
 
-  const deleteExercise = async (id: number) => {
+  const deleteExercise = async (id: string) => {
     try {
-      await axios.delete(`https://c1223b1bc21e6d23.mokky.dev/exercises/${id}`)
+      // await axios.delete(`https://c1223b1bc21e6d23.mokky.dev/exercises/${id}`)
+      await ExercisesService.deleteExercise(id)
       router.push({ name: 'home' })
     }
     catch (error) {
@@ -115,5 +141,6 @@ export const useExercisesManagementStore = defineStore('exercises-management', (
     updateExercise,
     deleteExercise,
     toggleAdded,
+    createExerciseHandler,
   }
 })

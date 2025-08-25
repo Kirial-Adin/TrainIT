@@ -6,11 +6,11 @@ import { useExercisesManagementStore } from '../../stores/exercises-management'
 import { useTrainingStore } from '../../stores/trainings'
 
 const props = defineProps<{
-  id: number
+  id: string
   title: string
   complexity: string
   type: string
-  equipment: string
+  equipment?: string
   imageUrl: string
 }>()
 

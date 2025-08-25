@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button'
+import { Button } from '../../../components/ui/button'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useTrainingSessionStore } from '../../stores/training-session'
+import { useTrainingSessionStore } from '../../../stores/training-session'
 
 const route = useRoute()
 const sessionStore = useTrainingSessionStore()

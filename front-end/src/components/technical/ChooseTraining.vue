@@ -34,4 +34,3 @@ function startTraining(training: Training) {
   </div>
 </template>
 
-<style scoped></style>

@@ -1,16 +1,20 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
-import Header from './components/page-proofs/Header.vue'
 import { useExercisesStore } from './stores/exercises'
 import { useTrainingStore } from './stores/trainings'
+import { useAuthStore } from './stores/auth'
+import Header from './components/page-proofs/Header.vue'
+
 
 const store = useExercisesStore()
 const trainingsStore = useTrainingStore()
+const authStore = useAuthStore()
 
 onMounted(async () => {
   await store.getExercises()
   await trainingsStore.getTraining()
+  await authStore.checkAuth()
 })
 </script>
 

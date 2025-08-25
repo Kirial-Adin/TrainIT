@@ -2,6 +2,7 @@ import type { Exercise, TrainingSession, UserProfile } from '../models'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import UserService from '../services/UserService'
 
 export const useUserStore = defineStore('user', () => {
   const router = useRouter()
@@ -61,11 +62,21 @@ export const useUserStore = defineStore('user', () => {
     return profile
   }
 
+  const getUserIdByToken = (refreshToken: string) => {
+    try {
+      const response = UserService.getUserIdByToken(refreshToken)
+      return response
+    } catch (e: any) {
+      throw new Error(e)
+    }
+  }
+
   return {
     profile,
     calculateGoal,
     addPoints,
     calculateTrainingPoints,
     saveProfile,
+    getUserIdByToken,
   }
 })

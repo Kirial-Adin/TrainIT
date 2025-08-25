@@ -1,22 +1,19 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import { onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import ExerciseEdit from '../components/technical/EditExercise.vue'
+import { onMounted, computed } from 'vue'
 import { useExercisesStore } from '../stores/exercises'
+import ExerciseEdit from '../components/technical/EditExercise.vue'
+import getExercisesById from '../utils/getExercisesById'
 
 const dataStore = useExercisesStore()
-const route = useRoute()
-const { currentExercise } = storeToRefs(dataStore)
+const currentExercise = computed(() => dataStore.currentExercise)
 
 onMounted(async () => {
-  const id = Number(route.params.id)
-  await dataStore.getExercisesById(id)
+  await getExercisesById()  
 })
 </script>
 
 <template>
-  <div>
+  <div v-if="currentExercise">
     <ExerciseEdit :current-exercise="currentExercise" />
   </div>
 </template>

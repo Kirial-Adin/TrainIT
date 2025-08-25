@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { useTrainingStore } from './trainings'
 import { useUserStore } from './user'
+import TrainingService from '@/services/TrainingService'
 
 export const useTrainingSessionStore = defineStore('trainingSession', () => {
   const currentSession = ref<TrainingSession | null>(null)
@@ -22,8 +23,8 @@ export const useTrainingSessionStore = defineStore('trainingSession', () => {
 
   const currentExercise = computed(() => {
     if (
-      !currentSession.value
-      || currentExerciseIndex.value >= currentSession.value.completedExercises.length
+      !currentSession.value ||
+      currentExerciseIndex.value >= currentSession.value.completedExercises.length
     ) {
       return null
     }
@@ -34,7 +35,7 @@ export const useTrainingSessionStore = defineStore('trainingSession', () => {
     currentSession.value = {
       trainingId: training.id,
       startTime: new Date(),
-      completedExercises: training.exercises.map(ex => ({
+      completedExercises: training.exercises.map((ex) => ({
         exerciseId: ex.exerciseId,
         actualValue: 0,
         duration: 0,
@@ -47,14 +48,14 @@ export const useTrainingSessionStore = defineStore('trainingSession', () => {
     currentExerciseIndex.value = 0
   }
 
-  function endTraining(id: string) {
+  async function endTraining(id: string) {
     try {
-      const response = axios.patch(`https://c1223b1bc21e6d23.mokky.dev/training/${id}`, {
-        completed: true,
-      })
+      // const response = axios.patch(`https://c1223b1bc21e6d23.mokky.dev/training/${id}`, {
+      //   completed: true,
+      // })
+      await TrainingService.patchTrainingById(id, true)
       isCompleted.value = true
-    }
-    catch (error) {
+    } catch (error) {
       throw error
     }
     currentSession.value = null
@@ -68,16 +69,14 @@ export const useTrainingSessionStore = defineStore('trainingSession', () => {
       isCompleted.value = false
       window.location.reload()
       trainingStore.startTrainingById(id)
-    }
-    catch (error) {
+    } catch (error) {
       throw error
     }
     currentSession.value = null
   }
 
   function startTimer() {
-    if (timerInterval.value)
-      return
+    if (timerInterval.value) return
 
     timerInterval.value = setInterval(() => {
       timer.value++
@@ -91,22 +90,48 @@ export const useTrainingSessionStore = defineStore('trainingSession', () => {
     }
   }
 
+  function startRestTimer() {
+    if (timerInterval.value) return
+    timerInterval.value = setInterval(() => {
+      if (restTime.value > 0) {
+        restTime.value--
+      } else {
+        endRest()
+      }
+    }, 1000) as unknown as number
+  }
+
+  function stopRestTimer() {
+    if (timerInterval.value) {
+      clearInterval(timerInterval.value)
+      timerInterval.value = null
+    }
+  }
+
   function startRest() {
     isResting.value = true
     timer.value = restTime.value
-    startTimer()
+    startRestTimer()
+  }
+
+  function endRest() {
+    stopRestTimer()
+    timer.value = 0
+    isResting.value = false
   }
 
   function adjustRestTime(seconds: number) {
     restTime.value = Math.max(0, restTime.value + seconds)
+    if (restTime.value === 0) {
+      endRest()
+    }
     if (isResting.value) {
       timer.value = restTime.value
     }
   }
 
   function completeExercise(actualValue: number) {
-    if (!currentSession.value)
-      return
+    if (!currentSession.value) return
 
     const exercise = currentSession.value.completedExercises[currentExerciseIndex.value]
     exercise.actualValue = actualValue
@@ -118,15 +143,13 @@ export const useTrainingSessionStore = defineStore('trainingSession', () => {
 
     if (currentExerciseIndex.value < currentSession.value.completedExercises.length - 1) {
       startRest()
-    }
-    else {
+    } else {
       finishTraining()
     }
   }
 
   function skipExercise() {
-    if (!currentSession.value)
-      return
+    if (!currentSession.value) return
 
     currentSession.value.skippedExercises.push(
       currentSession.value.completedExercises[currentExerciseIndex.value].exerciseId,
@@ -138,15 +161,13 @@ export const useTrainingSessionStore = defineStore('trainingSession', () => {
     if (currentExerciseIndex.value != currentSession.value.completedExercises.length) {
       currentExerciseIndex.value++
       startRest()
-    }
-    else {
+    } else {
       finishTraining()
     }
   }
 
   function finishTraining() {
-    if (!currentSession.value)
-      return
+    if (!currentSession.value) return
 
     currentSession.value.endTime = new Date()
     const points = userStore.calculateTrainingPoints(currentSession.value)
@@ -175,5 +196,6 @@ export const useTrainingSessionStore = defineStore('trainingSession', () => {
     adjustRestTime,
     startTimer,
     stopTimer,
+    endRest,
   }
 })

@@ -6,7 +6,7 @@ import ExerciseEdit from '../pages/ExerciseEdit.vue'
 import ExerciseView from '../pages/ExerciseView.vue'
 import Home from '../pages/Home.vue'
 import OnBoarding from '../pages/OnBoarding.vue'
-import Profile from '../pages/Profile.vue'
+import Auth from '../pages/Auth.vue'
 import TrainingMode from '../pages/TrainingMode.vue'
 import TrainingsCreate from '../pages/TrainingsCreate.vue'
 import TrainingSession from '../pages/TrainingSession.vue'
@@ -67,10 +67,15 @@ const router = createRouter({
       component: Character,
     },
     {
-      path: '/profile',
-      name: 'profile',
-      component: Profile,
+      path: '/auth/login',
+      component: Auth,
+      props: { authType: 'login' },
     },
+    {
+      path: '/auth/registration',
+      component: Auth,
+      props: { authType: 'registration' },
+    }
   ],
 })
 

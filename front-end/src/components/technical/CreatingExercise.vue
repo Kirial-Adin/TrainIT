@@ -3,8 +3,10 @@ import { Button } from '@/components/ui/button'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useExercisesManagementStore } from '../../stores/exercises-management'
+import { useFileStore } from '../../stores/file'
 
 const store = useExercisesManagementStore()
+const fileStore = useFileStore()
 const router = useRouter()
 
 const form = ref({
@@ -21,12 +23,13 @@ const measurementType = ref<'repeats' | 'time'>('repeats')
 const imageFile = ref<File | null>(null)
 const imagePreview = ref<string>('')
 
-const complexityOptions = ['Легкий', 'Средний', 'Сложный']
-const typeOptions = ['Сила', 'Кардио', 'Гибкость', 'Баланс', 'Другое']
-const equipmentOptions = ['Нет', 'Гантели', 'Фитнес резинки', 'Коврик', 'Другое']
+const complexityOptions = [{ value: 'easy', label: 'Легкий' }, { value: 'medium', label: 'Средний' }, { value: 'hard', label: 'Сложный' }]
+const typeOptions = [{ value: 'strength', label: 'Сила' }, { value: 'cardio', label: 'Кардио' }, { value: 'flexibility', label: 'Гибкость' }, { value: 'balance', label: 'Баланс' }, { value: 'other', label: 'Другое' }]
+const equipmentOptions = [{ value: 'none', label: 'Нет' }, { value: 'fitness_band', label: 'Фитнес резинки' }, { value: 'dumbbells', label: 'Гантели' }, { value: 'rug', label: 'Коврик' }, { value: 'other', label: 'Другое' }]
 
 function handleImageChange(event: Event) {
   const target = event.target as HTMLInputElement
+  // fileStore.uploadPreview(target.files[0])
   if (target.files && target.files[0]) {
     imageFile.value = target.files[0]
     imagePreview.value = URL.createObjectURL(target.files[0])
@@ -68,7 +71,7 @@ async function handleSubmit() {
         : { time: form.value.time, measurementType: 'time' }),
     }
 
-    await store.createExercise(exerciseData, imageFile.value)
+    await store.createExerciseHandler(exerciseData, imageFile.value)
     resetForm()
     alert('Exercise created successfully!')
   }
@@ -150,8 +153,8 @@ onMounted(async () => {
             <option value="">
               Выберите сложность
             </option>
-            <option v-for="option in complexityOptions" :key="option" :value="option">
-              {{ option }}
+            <option v-for="option in complexityOptions" :key="option.value" :value="option.value">
+              {{ option.label }}
             </option>
           </select>
         </div>
@@ -166,8 +169,8 @@ onMounted(async () => {
             <option value="">
               Выберите тип
             </option>
-            <option v-for="option in typeOptions" :key="option" :value="option">
-              {{ option }}
+            <option v-for="option in typeOptions" :key="option.value" :value="option.value">
+              {{ option.label }}
             </option>
           </select>
         </div>
@@ -182,8 +185,8 @@ onMounted(async () => {
             <option value="">
               Выберите оборудование
             </option>
-            <option v-for="option in equipmentOptions" :key="option" :value="option">
-              {{ option }}
+            <option v-for="option in equipmentOptions" :key="option.value" :value="option.value">
+              {{ option.label }}
             </option>
           </select>
         </div>
